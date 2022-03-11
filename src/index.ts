@@ -4,6 +4,8 @@ import * as express from "express";
 import * as bodyParser from "body-parser";
 import {Request, Response} from "express";
 import {Routes} from "./routes";
+import {PORT} from "./config";
+import * as morgan from 'morgan';
 
 function handleError(err, req, res, next) {
   res.status(err.statusCode || 500).send({message: err.message})
@@ -13,7 +15,9 @@ createConnection().then(async connection => {
 
   // create express app
   const app = express();
+  app.use(morgan('tiny'));
   app.use(bodyParser.json());
+
 
   // register express routes from defined application routes
   Routes.forEach(route => {
@@ -28,8 +32,8 @@ createConnection().then(async connection => {
   });
 
   app.use(handleError)
-  app.listen(process.env.PORT);
+  app.listen(PORT);
 
-  console.log("Express server has started on port 3000. Open http://localhost:3000/users to see results");
+  console.log(`Express server has started on port ${PORT}.`);
 
 }).catch(error => console.log(error));
